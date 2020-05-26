@@ -5,6 +5,9 @@ from response import Response
 from config import Config
 from datetime import datetime, timedelta
 
+import os
+import psutil
+
 
 class Server:
     def __init__(self):
@@ -37,6 +40,12 @@ class Server:
                 print(
                     f'Responded with {response.status_code} in {end_time - start_time}ms')
 
+                self.print_memory_usage()
+
         except KeyboardInterrupt:
             self.__socket.close()
             print('\nConnection Closed.\nGoodbye :)')
+
+    def print_memory_usage(self):
+        process = psutil.Process(os.getpid())
+        print(f'Memory used: {process.memory_info().rss / 1024 / 1024} MB')

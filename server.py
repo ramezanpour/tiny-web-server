@@ -3,6 +3,7 @@ import socket
 from request import Request
 from response import Response
 from config import Config
+from datetime import datetime, timedelta
 
 
 class Server:
@@ -19,6 +20,7 @@ class Server:
                 print(f'Listening on port {port}...')
                 connetion, address = self.__socket.accept()
                 data = connetion.recv(1024)
+                start_time = datetime.now().microsecond
                 if data is None:
                     print("No data received")
                     connetion.close()
@@ -28,9 +30,13 @@ class Server:
                     f'Request received from {address[0]}. Resource: {request.url}')
 
                 response = Response(self.__root_path, request)
-                print(f'Responded with {response.status_code}')
+
                 connetion.send(response.get_response())
                 connetion.close()
+                end_time = datetime.now().microsecond
+                print(
+                    f'Responded with {response.status_code} in {end_time - start_time}ms')
+
         except KeyboardInterrupt:
             self.__socket.close()
             print('\nConnection Closed.\nGoodbye :)')
